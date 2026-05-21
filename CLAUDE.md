@@ -82,6 +82,14 @@ Add `!` after the type or include `BREAKING CHANGE:` in the footer for major bum
 - `Company` — owns Branches, Departments, Users, Teams
 - `Team` — pivot through `team_members`
 
+**Tenant enforcement** (`app/Models/Concerns/BelongsToCompany.php`):
+- `Branch`, `Department`, `Team`, `User` all use the `BelongsToCompany` trait.
+- This attaches `CompanyScope` as a global scope — every query is automatically filtered to the current user's allowed company IDs.
+- Super-admins and developers bypass the scope entirely.
+- Cross-tenant read access is granted via `CrossTenantGrant` (supports user- and team-level grantees).
+- To bypass the scope in admin code: `Model::withoutGlobalScope(CompanyScope::class)` or `Model::forCompany($id)`.
+- Policies (`app/Policies/`) enforce the same rules for single-resource access. The `BasePolicy::before()` hook grants super-admin/developer full access.
+
 **Test environment:** Always uses in-memory SQLite (configured in `phpunit.xml`). No need for a database connection when running tests.
 
 ### Web
