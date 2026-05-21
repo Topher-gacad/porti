@@ -2,6 +2,11 @@
 
 use App\Http\Controllers\Auth\LocalAuthController;
 use App\Http\Controllers\Auth\SyncController;
+use App\Http\Controllers\BranchController;
+use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\TeamController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -37,8 +42,10 @@ Route::prefix('v1')->group(function () {
             request()->user()->load(['company', 'branch', 'department', 'teams'])
         ));
 
-        // Add resource routes here as the app grows:
-        // Route::apiResource('companies', CompanyController::class);
-        // Route::apiResource('users',     UserController::class);
+        Route::apiResource('companies',   CompanyController::class);
+        Route::apiResource('users',       UserController::class);
+        Route::apiResource('branches',    BranchController::class);
+        Route::apiResource('departments', DepartmentController::class);
+        Route::apiResource('teams',       TeamController::class);
     });
 });
