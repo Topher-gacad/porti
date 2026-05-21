@@ -11,6 +11,7 @@ export default async function LoginPage({
   if (session) redirect('/dashboard')
 
   const { error } = await searchParams
+  const allowLocalAuth = process.env.ALLOW_LOCAL_AUTH === 'true'
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 px-4">
@@ -27,7 +28,7 @@ export default async function LoginPage({
             </div>
           )}
 
-          <LoginForm />
+          <LoginForm allowLocalAuth={allowLocalAuth} />
         </div>
       </div>
     </main>

@@ -4,8 +4,10 @@ declare module 'next-auth' {
   interface User {
     authentikUid?: string
     username?: string
+    apiToken?: string
   }
   interface Session {
+    apiToken?: string
     user: {
       authentikUid?: string
       username?: string
@@ -17,5 +19,6 @@ declare module 'next-auth/jwt' {
   interface JWT {
     authentikUid?: string
     username?: string
+    apiToken?: string
   }
 }

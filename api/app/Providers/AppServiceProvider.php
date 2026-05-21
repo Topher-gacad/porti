@@ -26,7 +26,7 @@ class AppServiceProvider extends ServiceProvider
         // Log every failed login attempt for security monitoring.
         Event::listen(Failed::class, function (Failed $event) {
             AuditLog::create([
-                'action'      => 'auth.failed',
+                'action'      => AuditLog::ACTION_AUTH_SSO_FAILED,
                 'target_type' => 'user',
                 'payload'     => ['identifier' => $event->credentials['email'] ?? $event->credentials['username'] ?? null],
                 'ip_address'  => request()->ip(),

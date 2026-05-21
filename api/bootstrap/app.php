@@ -14,7 +14,8 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->append(\App\Http\Middleware\SecureHeaders::class);
         $middleware->alias([
-            'admin.only' => \App\Http\Middleware\AdminOnly::class,
+            'admin.only'    => \App\Http\Middleware\AdminOnly::class,
+            'service-token' => \App\Http\Middleware\ServiceToken::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
