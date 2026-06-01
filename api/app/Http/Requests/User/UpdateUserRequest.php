@@ -23,6 +23,8 @@ class UpdateUserRequest extends FormRequest
             'branch_id'     => ['nullable', 'integer', 'exists:branches,id'],
             'department_id' => ['nullable', 'integer', 'exists:departments,id'],
             'is_active'     => ['boolean'],
+            'roles'         => ['sometimes', 'nullable', 'array'],
+            'roles.*'       => ['string', 'exists:roles,name'],
         ];
     }
 }

@@ -21,6 +21,8 @@ class StoreUserRequest extends FormRequest
             'branch_id'     => ['nullable', 'integer', 'exists:branches,id'],
             'department_id' => ['nullable', 'integer', 'exists:departments,id'],
             'is_active'     => ['boolean'],
+            'roles'         => ['nullable', 'array'],
+            'roles.*'       => ['string', 'exists:roles,name'],
         ];
     }
 }

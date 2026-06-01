@@ -16,10 +16,11 @@ class UpdateCompanyRequest extends FormRequest
         $id = $this->route('company')->id;
 
         return [
-            'name'      => ['sometimes', 'string', 'max:255', "unique:companies,name,{$id}"],
-            'code'      => ['sometimes', 'string', 'max:50',  "unique:companies,code,{$id}"],
-            'logo'      => ['nullable', 'url', 'max:2048'],
-            'is_active' => ['boolean'],
+            'name'                     => ['sometimes', 'string', 'max:255', "unique:companies,name,{$id}"],
+            'code'                     => ['sometimes', 'string', 'max:50',  "unique:companies,code,{$id}"],
+            'logo'                     => ['nullable', 'url', 'max:2048'],
+            'is_active'                => ['boolean'],
+            'enforce_branch_isolation' => ['boolean'],
         ];
     }
 }
