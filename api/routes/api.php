@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AppController;
 use App\Http\Controllers\Auth\LocalAuthController;
 use App\Http\Controllers\Auth\SyncController;
 use App\Http\Controllers\BranchAccessGrantController;
@@ -76,6 +77,11 @@ Route::prefix('v1')->group(function () {
                 ]),
             ]);
         });
+
+        // Apps launcher: every active user sees their effective tiles and launches via the
+        // audited broker (admin CRUD of the catalog lands in Administration, Phase 4).
+        Route::get('apps', [AppController::class, 'index']);
+        Route::get('launch/{key}', [AppController::class, 'launch']);
 
         Route::get('roles', [RoleController::class, 'index']);
 

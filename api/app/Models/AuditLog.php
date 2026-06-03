@@ -75,6 +75,18 @@ class AuditLog extends Model
 
     public const ACTION_TEAM_FORCE_DELETED = 'team.force_deleted';
 
+    public const ACTION_APP_LAUNCHED = 'app.launched';
+
+    public const ACTION_CROSS_GRANT_CREATED = 'cross_tenant.granted';
+
+    public const ACTION_CROSS_GRANT_REVOKED = 'cross_tenant.revoked';
+
+    public const ACTION_USER_LINKED_SSO = 'user.sso.linked';
+
+    public const ACTION_USER_UNASSIGNED = 'user.unassigned';
+
+    public const ACTION_USER_COMPANY_CHANGED = 'user.company.changed';
+
     protected $fillable = [
         'user_id',
         'action',
