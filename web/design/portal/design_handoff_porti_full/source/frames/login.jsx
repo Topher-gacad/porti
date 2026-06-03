@@ -273,7 +273,91 @@ const fieldLabel = { display: 'block', fontSize: 11.5, fontWeight: 600, color: '
 const fieldWrap = { display: 'flex', alignItems: 'center', gap: 10, background: 'var(--paper)', border: '1px solid var(--ink-100)', borderRadius: 10, padding: '10px 12px', transition: 'border-color .15s, box-shadow .15s' };
 const fieldInput = { flex: 1, border: 'none', outline: 'none', background: 'transparent', fontSize: 13, color: 'var(--ink-900)', fontFamily: 'inherit' };
 
+// ── Bold variant — same calm card, but left panel spotlights the Poro mark ──
+const LoginFrameBold = ({ state = 'default' }) => {
+  const PoroMark = window.PoroMark;
+  return (
+  <BrowserChrome url="porti.comfac-it.com/login" height={820}>
+    <div className="frame" style={{ width: '100%', height: '100%', background: 'var(--paper)', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden' }}>
+      <div style={{ position: 'absolute', top: -200, right: -200, width: 600, height: 600, background: 'radial-gradient(circle, rgba(123,111,220,.10) 0%, transparent 70%)', pointerEvents: 'none' }} />
+      <div style={{ position: 'absolute', bottom: -240, left: -160, width: 540, height: 540, background: 'radial-gradient(circle, rgba(91,77,200,.07) 0%, transparent 70%)', pointerEvents: 'none' }} />
+
+      <div style={{ width: '100%', maxWidth: 880, position: 'relative', display: 'grid', gridTemplateColumns: '1fr 1.05fr', background: 'var(--card)', borderRadius: 20, overflow: 'hidden', border: '1px solid var(--ink-100)', boxShadow: '0 30px 80px -30px rgba(39,32,48,.18), 0 8px 24px -12px rgba(39,32,48,.08)' }}>
+        {/* LEFT — Poro spotlight on a soft tinted panel */}
+        <div style={{ background: 'var(--purple-50)', borderRight: '1px solid var(--ink-100)', padding: '36px 36px 32px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', position: 'relative', overflow: 'hidden' }}>
+          <Logo size={15} />
+
+          {/* spotlight mark */}
+          <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '8px 0' }}>
+            {/* radial spotlight glow behind the mark */}
+            <div aria-hidden="true" style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-58%)', width: 280, height: 280, borderRadius: '50%', background: 'radial-gradient(circle, var(--purple-100) 0%, rgba(228,223,250,.35) 45%, transparent 72%)', pointerEvents: 'none' }} />
+            {PoroMark && (
+              <div style={{ position: 'relative', filter: 'drop-shadow(0 14px 30px rgba(91,77,200,.28))' }}>
+                <PoroMark size={132} color="var(--purple-700)" />
+              </div>
+            )}
+            <div style={{ position: 'relative', marginTop: 22, fontSize: 22, fontWeight: 800, letterSpacing: -0.6, color: 'var(--ink-900)' }}>
+              Welcome to <span style={{ color: 'var(--purple-700)' }}>Porti.</span>
+            </div>
+            <div style={{ position: 'relative', marginTop: 6, fontSize: 12.5, color: 'var(--ink-500)', lineHeight: 1.55, maxWidth: 240 }}>
+              One sign-in for every COMFAC IT service.
+            </div>
+          </div>
+
+          <div style={{ position: 'relative', fontSize: 11, color: 'var(--ink-500)', textAlign: 'center' }}>
+            Need access? Email <span style={{ color: 'var(--purple-700)', fontWeight: 600 }}>it@comfac-it.com</span>
+          </div>
+        </div>
+
+        {/* RIGHT — form */}
+        <div style={{ padding: '40px 40px', display: 'flex', flexDirection: 'column', justifyContent: 'center', background: 'var(--card)' }}>
+          <div style={{ fontSize: 20, fontWeight: 700, letterSpacing: -0.4, marginBottom: 4, color: 'var(--ink-900)' }}>Sign in to Porti</div>
+          <div style={{ fontSize: 12.5, color: 'var(--ink-500)', marginBottom: 22 }}>
+            Use your COMFAC work credentials — we'll take you to the right place.
+          </div>
+
+          {state === 'error' && <ErrorBanner msg="Email or password incorrect. Try again." />}
+
+          <label style={fieldLabel}>Work email</label>
+          <div style={fieldWrap}>
+            <Icon name="mail" size={14} color="var(--ink-500)" />
+            <input style={fieldInput} placeholder="you@comfac-it.com" defaultValue={state === 'error' ? 'jdoe@comfac-it.com' : ''} />
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginTop: 14 }}>
+            <label style={fieldLabel}>Password</label>
+            <a style={{ fontSize: 11, color: 'var(--purple-700)', fontWeight: 600, cursor: 'pointer' }}>Forgot?</a>
+          </div>
+          <PasswordField value={state === 'error' ? '••••••••' : ''} error={state === 'error'} />
+
+          <label style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 14, fontSize: 12, color: 'var(--ink-700)', cursor: 'pointer' }}>
+            <span style={{ width: 15, height: 15, borderRadius: 4, border: '1.5px solid var(--ink-300)', background: 'var(--card)' }} />
+            Keep me signed in
+          </label>
+
+          <button style={{
+            width: '100%', marginTop: 22,
+            background: 'var(--purple-700)', color: '#fff',
+            border: 'none', padding: '12px 16px', borderRadius: 10,
+            fontSize: 13.5, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit',
+            display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+            boxShadow: '0 1px 0 rgba(255,255,255,.15) inset, 0 6px 16px -8px rgba(91,77,200,.5)',
+          }}>
+            Sign in <Icon name="arrow-right" size={14} />
+          </button>
+
+          <div style={{ marginTop: 16, fontSize: 11.5, color: 'var(--ink-500)', textAlign: 'center' }}>
+            New here? <span style={{ color: 'var(--purple-700)', fontWeight: 600, cursor: 'pointer' }}>Request access</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </BrowserChrome>
+  );
+};
+
 window.LoginFrameNoRole = LoginFrameNoRole;
 window.LoginFrame = LoginFrameNoRole; // alias for backward compat
 window.Login2FAFrame = Login2FAFrame;
 window.ForgotPasswordFrame = ForgotPasswordFrame;
+window.LoginFrameBold = LoginFrameBold;
