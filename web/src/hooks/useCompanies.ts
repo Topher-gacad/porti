@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import apiClient from '@/lib/axios'
+import apiClient, { fetchAllPages } from '@/lib/axios'
 import type { Company, Paginated, Single } from '@/types/models'
 
 export type CompanyPayload = {
@@ -25,12 +25,7 @@ export function useCompanies(page = 1) {
 export function useAllCompanies() {
   return useQuery({
     queryKey: ['companies', 'all'],
-    queryFn: async () => {
-      const { data } = await apiClient.get<Paginated<Company>>('/companies', {
-        params: { per_page: 500 },
-      })
-      return data.data
-    },
+    queryFn: () => fetchAllPages<Company>('/companies'),
     staleTime: 2 * 60 * 1000,
   })
 }

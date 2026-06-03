@@ -26,7 +26,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const synced = await syncUserToLaravel(authentikUser)
         if (!synced) return null
 
+        // Fail the login if the profile can't be loaded — otherwise the user gets an
+        // authenticated session with empty roles/permissions that looks like access loss.
         const profile = await fetchUserProfile(synced.token)
+        if (!profile) return null
 
         return {
           id: authentikUser.uid,
@@ -59,6 +62,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         if (!result) return null
 
         const profile = await fetchUserProfile(result.token)
+        if (!profile) return null
 
         return {
           id: String(result.user.id),

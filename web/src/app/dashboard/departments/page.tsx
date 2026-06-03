@@ -14,7 +14,7 @@ import {
   useDeleteDepartment,
   type DepartmentPayload,
 } from '@/hooks/useDepartments'
-import { useBranches } from '@/hooks/useBranches'
+import { useAllBranches } from '@/hooks/useBranches'
 
 const departmentSchema = z.object({
   name: z.string().min(1, 'Name is required').max(255),
@@ -36,7 +36,7 @@ function DepartmentFormModal({
   const create = useCreateDepartment()
   const update = useUpdateDepartment()
   const isPending = create.isPending || update.isPending
-  const { data: branchData } = useBranches(1)
+  const { data: branchData } = useAllBranches()
 
   const {
     register,
@@ -121,7 +121,7 @@ function DepartmentFormModal({
               className="w-full rounded bg-slate-700 border border-slate-600 text-slate-100 px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500"
             >
               <option value="">— None —</option>
-              {branchData?.data.map((branch) => (
+              {branchData?.map((branch) => (
                 <option key={branch.id} value={branch.id}>
                   {branch.name}
                 </option>

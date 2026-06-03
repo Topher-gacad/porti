@@ -30,6 +30,12 @@ const PATHS: Record<string, React.ReactNode> = {
   'check':           <><path d="m5 12 5 5 9-12"/></>,
   'send':            <><path d="m22 2-11 11"/><path d="M22 2 15 22l-4-9-9-4 20-7Z"/></>,
   'arrow-up-right':  <><path d="M7 17 17 7"/><path d="M7 7h10v10"/></>,
+  'home':            <><path d="m3 11 9-8 9 8"/><path d="M5 10v10h14V10"/></>,
+  'inbox':           <><path d="M3 13h5l2 3h4l2-3h5"/><path d="M5 5h14l2 8v6H3v-6l2-8Z"/></>,
+  'book':            <><path d="M4 5a2 2 0 0 1 2-2h13v18H6a2 2 0 0 1-2-2V5Z"/><path d="M4 5v13a2 2 0 0 1 2-2h13"/></>,
+  'bell':            <><path d="M6 9a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6Z"/><path d="M10 19a2 2 0 0 0 4 0"/></>,
+  'plus':            <><path d="M12 5v14"/><path d="M5 12h14"/></>,
+  'key':             <><circle cx="8" cy="15" r="4"/><path d="m11 12 9-9"/><path d="m17 6 3 3"/><path d="m14 9 3 3"/></>,
 }
 
 export default function Icon({ name, size = 20, color = 'currentColor', strokeWidth = 1.75, style }: Props) {

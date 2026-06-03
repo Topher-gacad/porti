@@ -1,4 +1,5 @@
 import axios from 'axios'
+import type { Paginated } from '@/types/models'
 
 const apiClient = axios.create({
   baseURL: '/api/v1',
@@ -7,6 +8,28 @@ const apiClient = axios.create({
     Accept: 'application/json',
   },
 })
+
+/**
+ * Fetch every page of a paginated endpoint and return the flattened list.
+ * Used by the `useAll*` hooks (dropdowns, pickers) so they never silently
+ * truncate the tenant's data — a fixed `per_page` cap would drop records.
+ */
+export async function fetchAllPages<T>(url: string): Promise<T[]> {
+  const items: T[] = []
+  let page = 1
+  let lastPage = 1
+
+  do {
+    const { data } = await apiClient.get<Paginated<T>>(url, {
+      params: { page, per_page: 100 },
+    })
+    items.push(...data.data)
+    lastPage = data.meta.last_page
+    page += 1
+  } while (page <= lastPage)
+
+  return items
+}
 
 // A 401 from the proxy means the cached Sanctum token is missing or was revoked
 // (the backend revokes login tokens on any role change). Without this, the stale

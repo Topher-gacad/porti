@@ -26,13 +26,15 @@ export default function Sidebar() {
   const pathname = usePathname()
   const { hasAnyRole, can, isLoading } = usePermissions()
 
-  const visibleItems = isLoading
-    ? NAV_ITEMS
-    : NAV_ITEMS.filter(({ requireRoles, requirePermission }) => {
-        if (requireRoles && !hasAnyRole(...requireRoles)) return false
-        if (requirePermission && !can(requirePermission) && !hasAnyRole('super-admin', 'developer')) return false
-        return true
-      })
+  const visibleItems = NAV_ITEMS.filter(({ requireRoles, requirePermission }) => {
+    // Ungated items always show. Gated items stay hidden until permissions load,
+    // so restricted links never flash for users who lack access.
+    if (!requireRoles && !requirePermission) return true
+    if (isLoading) return false
+    if (requireRoles && !hasAnyRole(...requireRoles)) return false
+    if (requirePermission && !can(requirePermission) && !hasAnyRole('super-admin', 'developer')) return false
+    return true
+  })
 
   return (
     <aside className="w-56 shrink-0 bg-slate-800 border-r border-slate-700 flex flex-col">

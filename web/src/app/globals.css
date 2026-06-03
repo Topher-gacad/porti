@@ -116,3 +116,8 @@ body {
   background: var(--paper);
   color: var(--ink-900);
 }
+
+/* Monospace helper — ticket IDs, ⌘K hints (admin shell + dashboard) */
+.mono {
+  font-family: var(--font-geist-mono), ui-monospace, "JetBrains Mono", monospace;
+}

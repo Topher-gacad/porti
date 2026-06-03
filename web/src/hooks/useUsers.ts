@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import apiClient from '@/lib/axios'
+import apiClient, { fetchAllPages } from '@/lib/axios'
 import type { User, Paginated, Single } from '@/types/models'
 
 export type UserPayload = {
@@ -51,15 +51,21 @@ export function useDeleteUser() {
   })
 }
 
+export function useUser(id: number) {
+  return useQuery({
+    queryKey: ['users', id],
+    queryFn: async () => {
+      const { data } = await apiClient.get<Single<User>>(`/users/${id}`)
+      return data.data
+    },
+    enabled: Number.isFinite(id) && id > 0,
+  })
+}
+
 export function useAllUsers() {
   return useQuery({
     queryKey: ['users', 'all'],
-    queryFn: async () => {
-      const { data } = await apiClient.get<Paginated<User>>('/users', {
-        params: { per_page: 500 },
-      })
-      return data.data
-    },
+    queryFn: () => fetchAllPages<User>('/users'),
     staleTime: 2 * 60 * 1000,
   })
 }

@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import apiClient from '@/lib/axios'
+import apiClient, { fetchAllPages } from '@/lib/axios'
 import type { Branch, Paginated, Single } from '@/types/models'
 
 export type BranchPayload = {
@@ -23,12 +23,7 @@ export function useBranches(page = 1) {
 export function useAllBranches() {
   return useQuery({
     queryKey: ['branches', 'all'],
-    queryFn: async () => {
-      const { data } = await apiClient.get<Paginated<Branch>>('/branches', {
-        params: { per_page: 500 },
-      })
-      return data.data
-    },
+    queryFn: () => fetchAllPages<Branch>('/branches'),
     staleTime: 2 * 60 * 1000,
   })
 }

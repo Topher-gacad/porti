@@ -14,7 +14,7 @@ export type RoleAssignment = {
   role: string
   scope_type: ScopeType
   scope_id: number | null
-  assigned_by: { id: number; name: string } | null
+  assigned_by?: { id: number; name: string } | null
   created_at: string
 }
 
