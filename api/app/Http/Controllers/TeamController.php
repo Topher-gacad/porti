@@ -18,7 +18,9 @@ class TeamController extends Controller
     {
         $this->authorize('viewAny', Team::class);
 
-        return TeamResource::collection(Team::paginate(20));
+        $perPage = min((int) request()->integer('per_page', 20), 500);
+
+        return TeamResource::collection(Team::paginate($perPage));
     }
 
     public function store(StoreTeamRequest $request): TeamResource

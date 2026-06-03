@@ -61,6 +61,11 @@ Route::prefix('v1')->group(function () {
                 'branch_id'        => $user->branch_id,
                 'department_id'    => $user->department_id,
                 'is_active'        => $user->is_active,
+                'last_login_at'    => $user->last_login_at,
+                'created_at'       => $user->created_at,
+                'company'          => $user->company ? ['id' => $user->company->id, 'name' => $user->company->name] : null,
+                'branch'           => $user->branch ? ['id' => $user->branch->id, 'name' => $user->branch->name] : null,
+                'department'       => $user->department ? ['id' => $user->department->id, 'name' => $user->department->name] : null,
                 'roles'            => $sps->allRoles($user),
                 'permissions'      => $sps->allPermissions($user),
                 'role_assignments' => $user->roleAssignments->map(fn ($a) => [

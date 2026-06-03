@@ -66,7 +66,9 @@ class UserController extends Controller
     {
         $this->authorize('view', $user);
 
-        return new UserResource($user->load('roleAssignments.role'));
+        // Load flat roles too: a user may hold a role via Spatie (e.g. seeded
+        // super-admin) without a scoped UserRoleAssignment row.
+        return new UserResource($user->load('roles', 'roleAssignments.role'));
     }
 
     public function update(UpdateUserRequest $request, User $user): UserResource
