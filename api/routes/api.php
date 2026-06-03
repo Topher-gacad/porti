@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\SyncController;
 use App\Http\Controllers\BranchAccessGrantController;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\CrossTenantGrantController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\RoleAssignmentController;
@@ -123,6 +124,11 @@ Route::prefix('v1')->group(function () {
         Route::get('companies/{company}/branch-access-grants',           [BranchAccessGrantController::class, 'index']);
         Route::post('companies/{company}/branch-access-grants',          [BranchAccessGrantController::class, 'store']);
         Route::delete('companies/{company}/branch-access-grants/{grant}', [BranchAccessGrantController::class, 'destroy']);
+
+        // Cross-company access grants (super-admin/developer only via policy)
+        Route::get('cross-tenant-grants',            [CrossTenantGrantController::class, 'index']);
+        Route::post('cross-tenant-grants',           [CrossTenantGrantController::class, 'store']);
+        Route::delete('cross-tenant-grants/{grant}', [CrossTenantGrantController::class, 'destroy']);
 
         // Audit log (read-only, company-scoped for admins)
         Route::get('audit-logs', [AuditLogController::class, 'index']);
