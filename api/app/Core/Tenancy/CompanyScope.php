@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Scopes;
+namespace App\Core\Tenancy;
 
 use App\Models\BranchAccessGrant;
 use App\Models\CrossTenantGrant;

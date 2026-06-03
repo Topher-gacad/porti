@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Models\Branch;
 use App\Models\Department;
-use App\Models\Scopes\CompanyScope;
+use App\Core\Tenancy\CompanyScope;
 use App\Models\User;
 use App\Models\UserRoleAssignment;
 use Illuminate\Database\Eloquent\Model;

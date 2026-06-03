@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Models\Concerns;
+namespace App\Core\Tenancy;
 
-use App\Models\Scopes\CompanyScope;
 use Illuminate\Database\Eloquent\Builder;
 
 trait BelongsToCompany

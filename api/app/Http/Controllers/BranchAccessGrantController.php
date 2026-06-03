@@ -7,7 +7,7 @@ use App\Models\AuditLog;
 use App\Models\Branch;
 use App\Models\BranchAccessGrant;
 use App\Models\Company;
-use App\Models\Scopes\CompanyScope;
+use App\Core\Tenancy\CompanyScope;
 use App\Services\AuditLogger;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
