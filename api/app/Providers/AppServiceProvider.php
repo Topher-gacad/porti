@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Core\Workflow\ConditionRegistry;
+use App\Core\Workflow\Workflow;
 use App\Models\AuditLog;
 use App\Models\Branch;
 use App\Models\Company;
@@ -22,7 +24,12 @@ use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
-    public function register(): void {}
+    public function register(): void
+    {
+        // Singleton so module-registered workflow condition guards accumulate into one
+        // instance the engine and validator share.
+        $this->app->singleton(ConditionRegistry::class);
+    }
 
     public function boot(): void
     {
@@ -30,6 +37,7 @@ class AppServiceProvider extends ServiceProvider
         Relation::enforceMorphMap([
             'user' => User::class,
             'team' => Team::class,
+            'workflow' => Workflow::class,
         ]);
 
         // Model observers — write audit entries for all CRUD operations.
