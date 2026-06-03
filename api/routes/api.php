@@ -9,8 +9,10 @@ use App\Http\Controllers\BranchController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\CrossTenantGrantController;
 use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\FormController;
 use App\Http\Controllers\RoleAssignmentController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\SubmissionController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\TeamMemberController;
 use App\Http\Controllers\UserController;
@@ -84,6 +86,16 @@ Route::prefix('v1')->group(function () {
         // audited broker (admin CRUD of the catalog lands in Administration, Phase 4).
         Route::get('apps', [AppController::class, 'index']);
         Route::get('launch/{key}', [AppController::class, 'launch']);
+
+        // Submission runtime: file a request, list mine / my approval inbox, act on one.
+        // Authoring forms/workflows is the Administration surface (Phase 4).
+        Route::get('forms', [FormController::class, 'index']);
+        Route::get('forms/{key}', [FormController::class, 'show']);
+        Route::get('submissions', [SubmissionController::class, 'index']);
+        Route::post('submissions', [SubmissionController::class, 'store']);
+        Route::get('submissions/{submission}', [SubmissionController::class, 'show']);
+        Route::get('submissions/{submission}/transitions', [SubmissionController::class, 'transitions']);
+        Route::post('submissions/{submission}/transitions/{slug}', [SubmissionController::class, 'applyTransition']);
 
         Route::get('roles', [RoleController::class, 'index']);
 

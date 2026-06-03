@@ -12,6 +12,7 @@ use App\Models\Team;
 use App\Models\User;
 use App\Models\UserRoleAssignment;
 use App\Modules\Submissions\Submission;
+use App\Modules\Submissions\SubmissionPolicy;
 use App\Observers\BranchObserver;
 use App\Observers\CompanyObserver;
 use App\Observers\DepartmentObserver;
@@ -21,6 +22,7 @@ use App\Observers\UserRoleAssignmentObserver;
 use Illuminate\Auth\Events\Failed;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -41,6 +43,10 @@ class AppServiceProvider extends ServiceProvider
             'workflow' => Workflow::class,
             'submission' => Submission::class,
         ]);
+
+        // Submission lives outside App\Models, so register its policy explicitly rather
+        // than relying on the default App\Policies\{Model}Policy auto-discovery.
+        Gate::policy(Submission::class, SubmissionPolicy::class);
 
         // Model observers — write audit entries for all CRUD operations.
         User::observe(UserObserver::class);
