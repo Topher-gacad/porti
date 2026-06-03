@@ -87,6 +87,10 @@ class AuditLog extends Model
 
     public const ACTION_USER_COMPANY_CHANGED = 'user.company.changed';
 
+    public const ACTION_WORKFLOW_STARTED = 'workflow.started';
+
+    public const ACTION_WORKFLOW_TRANSITIONED = 'workflow.transitioned';
+
     protected $fillable = [
         'user_id',
         'action',
