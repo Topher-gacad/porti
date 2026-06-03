@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Core\Tenancy\CompanyScope;
 use App\Http\Requests\User\StoreUserRequest;
 use App\Http\Requests\User\UpdateUserRequest;
 use App\Http\Resources\UserResource;
@@ -9,6 +10,7 @@ use App\Models\User;
 use App\Models\UserRoleAssignment;
 use App\Services\RoleAssignmentGuard;
 use App\Services\TenantAccess;
+use App\Services\UserCompanyTransfer;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -20,6 +22,7 @@ class UserController extends Controller
     public function __construct(
         private readonly TenantAccess $tenant,
         private readonly RoleAssignmentGuard $roleGuard,
+        private readonly UserCompanyTransfer $companyTransfer,
     ) {}
 
     public function index(): AnonymousResourceCollection
@@ -30,6 +33,26 @@ class UserController extends Controller
 
         return UserResource::collection(
             User::with('roles', 'roleAssignments.role')->paginate($perPage)
+        );
+    }
+
+    /**
+     * The Unassigned review queue: users a JIT SSO login could not resolve to any company
+     * (company_id IS NULL). Triaging cross-company strangers is a privileged action, so the
+     * queue is super-admin/developer only; they assign a company via the normal update.
+     */
+    public function unassigned(): AnonymousResourceCollection
+    {
+        abort_unless($this->tenant->isPrivileged(auth()->user()), Response::HTTP_FORBIDDEN);
+
+        $perPage = min((int) request()->integer('per_page', 20), 500);
+
+        return UserResource::collection(
+            User::withoutGlobalScope(CompanyScope::class)
+                ->whereNull('company_id')
+                ->with('roles', 'roleAssignments.role')
+                ->orderBy('created_at')
+                ->paginate($perPage)
         );
     }
 
@@ -88,11 +111,22 @@ class UserController extends Controller
             unset($data['password']);
         }
 
-        DB::transaction(function () use ($user, $data, $hasRoles, $roles) {
+        $oldCompanyId = $user->company_id;
+        $movingCompany = array_key_exists('company_id', $data)
+            && (int) ($data['company_id'] ?? 0) !== (int) ($oldCompanyId ?? 0);
+
+        DB::transaction(function () use ($user, $data, $hasRoles, $roles, $movingCompany, $oldCompanyId) {
             $user->update($data);
 
             if ($hasRoles) {
                 $this->applyRoles($user, $roles);
+            }
+
+            // A between-company move revokes the old company's scoped role assignments
+            // and invalidates tokens (architecture §8). Runs after role sync so freshly
+            // applied new-company roles are preserved.
+            if ($movingCompany) {
+                $this->companyTransfer->handleMove($user, $oldCompanyId);
             }
         });
 
