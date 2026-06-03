@@ -8,7 +8,7 @@ trait BelongsToCompany
 {
     public static function bootBelongsToCompany(): void
     {
-        static::addGlobalScope(new CompanyScope());
+        static::addGlobalScope(new CompanyScope);
 
         static::creating(function (self $model): void {
             if (auth()->check() && empty($model->company_id)) {
