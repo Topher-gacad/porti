@@ -11,6 +11,7 @@ use App\Models\Department;
 use App\Models\Team;
 use App\Models\User;
 use App\Models\UserRoleAssignment;
+use App\Modules\Submissions\Submission;
 use App\Observers\BranchObserver;
 use App\Observers\CompanyObserver;
 use App\Observers\DepartmentObserver;
@@ -38,6 +39,7 @@ class AppServiceProvider extends ServiceProvider
             'user' => User::class,
             'team' => Team::class,
             'workflow' => Workflow::class,
+            'submission' => Submission::class,
         ]);
 
         // Model observers — write audit entries for all CRUD operations.
