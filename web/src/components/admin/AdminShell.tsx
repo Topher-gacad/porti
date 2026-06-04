@@ -15,7 +15,7 @@ type Tab = { id: string; icon: string; label: string; href?: string; badge?: str
 // as each surface ships.
 const TABS: Tab[] = [
   { id: 'dashboard', icon: 'home', label: 'Dashboard', href: '/dashboard' },
-  { id: 'services', icon: 'grid', label: 'Services' },
+  { id: 'services', icon: 'grid', label: 'Services', href: '/dashboard/services' },
   { id: 'requests', icon: 'inbox', label: 'Requests', badge: '4' },
   { id: 'kb', icon: 'book', label: 'Knowledge Base' },
   { id: 'board', icon: 'message-circle', label: 'Community' },
