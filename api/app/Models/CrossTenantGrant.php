@@ -17,9 +17,9 @@ class CrossTenantGrant extends Model
     ];
 
     protected $casts = [
-        'valid_from'  => 'datetime',
+        'valid_from' => 'datetime',
         'valid_until' => 'datetime',
-        'is_active'   => 'boolean',
+        'is_active' => 'boolean',
     ];
 
     public function targetCompany(): BelongsTo
@@ -44,7 +44,8 @@ class CrossTenantGrant extends Model
 
     public function permissions(): BelongsToMany
     {
-        return $this->belongsToMany(Permission::class, 'cross_tenant_grant_permissions');
+        // Pivot uses grant_id/permission_id; the inferred cross_tenant_grant_id is wrong.
+        return $this->belongsToMany(Permission::class, 'cross_tenant_grant_permissions', 'grant_id', 'permission_id');
     }
 
     public function scopeActive($query)

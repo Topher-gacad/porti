@@ -2,19 +2,19 @@
 
 namespace App\Models;
 
-use App\Models\Concerns\BelongsToCompany;
+use App\Core\Tenancy\BelongsToCompany;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Team extends Model
 {
-    use SoftDeletes, BelongsToCompany;
+    use BelongsToCompany, SoftDeletes;
 
     protected $fillable = ['company_id', 'name', 'description', 'is_active'];
 
-    protected $casts = ['is_active' => 'boolean'];
+    protected $casts = ['company_id' => 'integer', 'is_active' => 'boolean'];
 
     public function company(): BelongsTo
     {
@@ -23,6 +23,8 @@ class Team extends Model
 
     public function members(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'team_members')->withTimestamps();
+        // team_members has created_at only (DB default); no updated_at column exists,
+        // so withTimestamps() would break attach().
+        return $this->belongsToMany(User::class, 'team_members');
     }
 }

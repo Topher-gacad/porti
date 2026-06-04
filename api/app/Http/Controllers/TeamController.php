@@ -6,16 +6,21 @@ use App\Http\Requests\Team\StoreTeamRequest;
 use App\Http\Requests\Team\UpdateTeamRequest;
 use App\Http\Resources\TeamResource;
 use App\Models\Team;
+use App\Services\TenantAccess;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Symfony\Component\HttpFoundation\Response;
 
 class TeamController extends Controller
 {
+    public function __construct(private readonly TenantAccess $tenant) {}
+
     public function index(): AnonymousResourceCollection
     {
         $this->authorize('viewAny', Team::class);
 
-        return TeamResource::collection(Team::paginate(20));
+        $perPage = min((int) request()->integer('per_page', 20), 500);
+
+        return TeamResource::collection(Team::paginate($perPage));
     }
 
     public function store(StoreTeamRequest $request): TeamResource
@@ -23,6 +28,8 @@ class TeamController extends Controller
         $this->authorize('create', Team::class);
 
         $data = array_merge(['is_active' => true], $request->validated());
+
+        $this->tenant->assertTenantAssignment(auth()->user(), $data);
 
         return new TeamResource(Team::create($data));
     }
@@ -38,7 +45,13 @@ class TeamController extends Controller
     {
         $this->authorize('update', $team);
 
-        $team->update($request->validated());
+        $data = $request->validated();
+
+        // No-op today (company_id is not an updatable field), but keeps the guard
+        // in place if a tenant FK is ever added to UpdateTeamRequest.
+        $this->tenant->assertTenantAssignment(auth()->user(), $data, $team);
+
+        $team->update($data);
 
         return new TeamResource($team);
     }

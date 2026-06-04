@@ -19,16 +19,17 @@ class BranchPolicy extends BasePolicy
 
     public function create(User $user): bool
     {
-        return $user->company_id !== null;
+        return $user->company_id !== null
+            && $this->scopedCanAny($user, ['create-branches', 'manage-branches'], ['company_id' => $user->company_id]);
     }
 
     public function update(User $user, Branch $branch): bool
     {
-        return $user->company_id === $branch->company_id;
+        return $this->scopedCanAny($user, ['update-branches', 'manage-branches'], ['company_id' => $branch->company_id]);
     }
 
     public function delete(User $user, Branch $branch): bool
     {
-        return $user->company_id === $branch->company_id;
+        return $this->scopedCanAny($user, ['delete-branches', 'manage-branches'], ['company_id' => $branch->company_id]);
     }
 }

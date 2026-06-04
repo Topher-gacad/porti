@@ -19,16 +19,23 @@ class DepartmentPolicy extends BasePolicy
 
     public function create(User $user): bool
     {
-        return $user->company_id !== null;
+        return $user->company_id !== null
+            && $this->scopedCanAny($user, ['create-departments', 'manage-departments'], ['company_id' => $user->company_id]);
     }
 
     public function update(User $user, Department $department): bool
     {
-        return $user->company_id === $department->company_id;
+        return $this->scopedCanAny($user, ['update-departments', 'manage-departments'], [
+            'company_id' => $department->company_id,
+            'branch_id'  => $department->branch_id,
+        ]);
     }
 
     public function delete(User $user, Department $department): bool
     {
-        return $user->company_id === $department->company_id;
+        return $this->scopedCanAny($user, ['delete-departments', 'manage-departments'], [
+            'company_id' => $department->company_id,
+            'branch_id'  => $department->branch_id,
+        ]);
     }
 }

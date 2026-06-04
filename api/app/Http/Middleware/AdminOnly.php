@@ -14,13 +14,13 @@ class AdminOnly
 
     public function handle(Request $request, Closure $next): Response
     {
-        if (!env('APP_ADMIN_ONLY', true)) {
+        if (! config('portal.admin_only')) {
             return $next($request);
         }
 
         $user = $request->user();
 
-        if (!$user?->hasAnyRole(self::PRIVILEGED_ROLES)) {
+        if (! $user?->hasAnyRole(self::PRIVILEGED_ROLES)) {
             abort(Response::HTTP_FORBIDDEN, 'Access is currently restricted to administrators.');
         }
 

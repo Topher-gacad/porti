@@ -10,9 +10,12 @@ class Company extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['name', 'code', 'logo', 'is_active'];
+    protected $fillable = ['name', 'code', 'logo', 'is_active', 'enforce_branch_isolation'];
 
-    protected $casts = ['is_active' => 'boolean'];
+    protected $casts = [
+        'is_active'                 => 'boolean',
+        'enforce_branch_isolation'  => 'boolean',
+    ];
 
     public function branches(): HasMany
     {
@@ -32,5 +35,10 @@ class Company extends Model
     public function teams(): HasMany
     {
         return $this->hasMany(Team::class);
+    }
+
+    public function branchAccessGrants(): HasMany
+    {
+        return $this->hasMany(BranchAccessGrant::class);
     }
 }

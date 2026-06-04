@@ -102,5 +102,7 @@ export async function authenticateWithAuthentik(
   })
   if (!meRes.ok) return null
 
-  return meRes.json() as Promise<AuthentikUser>
+  // Authentik /api/v3/core/users/me/ returns { user: AuthentikUser, original: ... }
+  const data = await meRes.json() as { user: AuthentikUser }
+  return data.user ?? null
 }

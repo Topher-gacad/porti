@@ -12,9 +12,9 @@ class ServiceToken
 {
     public function handle(Request $request, Closure $next): Response
     {
-        $secret = env('AUTH_SYNC_SECRET');
+        $secret = config('portal.sync_secret');
 
-        if (!$secret || $request->header('X-Service-Token') !== $secret) {
+        if (! $secret || $request->header('X-Service-Token') !== $secret) {
             abort(Response::HTTP_UNAUTHORIZED, 'Invalid service token.');
         }
 

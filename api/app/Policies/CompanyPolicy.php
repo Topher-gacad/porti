@@ -24,7 +24,7 @@ class CompanyPolicy extends BasePolicy
 
     public function update(User $user, Company $company): bool
     {
-        return $user->company_id === $company->id;
+        return $this->scopedCanAny($user, ['update-company', 'manage-company'], ['company_id' => $company->id]);
     }
 
     public function delete(User $user, Company $company): bool
@@ -35,5 +35,10 @@ class CompanyPolicy extends BasePolicy
     public function restore(User $user, Company $company): bool
     {
         return false;
+    }
+
+    public function manageAccessGrants(User $user, Company $company): bool
+    {
+        return $this->scopedCanAny($user, ['update-company', 'manage-company'], ['company_id' => $company->id]);
     }
 }

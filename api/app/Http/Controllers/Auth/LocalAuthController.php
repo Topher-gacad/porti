@@ -14,7 +14,7 @@ class LocalAuthController extends Controller
 {
     public function __invoke(LocalLoginRequest $request): JsonResponse
     {
-        if (!env('ALLOW_LOCAL_AUTH', false)) {
+        if (! config('portal.allow_local_auth')) {
             abort(Response::HTTP_FORBIDDEN, 'Local authentication is not enabled.');
         }
 
@@ -22,12 +22,13 @@ class LocalAuthController extends Controller
             ->where('is_active', true)
             ->first();
 
-        if (!$user || !Hash::check($request->password, $user->password)) {
+        if (! $user || ! Hash::check($request->password, $user->password)) {
             AuditLog::create([
-                'action'     => AuditLog::ACTION_AUTH_LOCAL_FAILED,
-                'payload'    => ['email' => $request->email],
+                'action' => AuditLog::ACTION_AUTH_LOCAL_FAILED,
+                'payload' => ['email' => $request->email],
                 'ip_address' => $request->ip(),
                 'user_agent' => $request->userAgent(),
+                'created_at' => now(),
             ]);
 
             return response()->json(
@@ -37,19 +38,19 @@ class LocalAuthController extends Controller
         }
 
         AuditLog::create([
-            'user_id'    => $user->id,
+            'user_id' => $user->id,
             'company_id' => $user->company_id,
-            'action'     => AuditLog::ACTION_AUTH_LOCAL_SUCCESS,
+            'action' => AuditLog::ACTION_AUTH_LOCAL_SUCCESS,
             'ip_address' => $request->ip(),
             'user_agent' => $request->userAgent(),
+            'created_at' => now(),
         ]);
 
-        $user->tokens()->where('name', 'login')->delete();
-        $token = $user->createToken('login')->plainTextToken;
+        $token = $user->issueLoginToken();
 
         return response()->json([
             'token' => $token,
-            'user'  => $user->only(['id', 'name', 'email', 'authentik_uid', 'company_id', 'is_active']),
+            'user' => $user->only(['id', 'name', 'email', 'authentik_uid', 'company_id', 'is_active']),
         ]);
     }
 }

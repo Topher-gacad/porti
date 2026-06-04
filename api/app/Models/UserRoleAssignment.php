@@ -14,6 +14,10 @@ class UserRoleAssignment extends Model
         'assigned_by',
     ];
 
+    protected $casts = [
+        'scope_id' => 'integer',
+    ];
+
     public const SCOPE_GLOBAL     = 'global';
     public const SCOPE_COMPANY    = 'company';
     public const SCOPE_BRANCH     = 'branch';

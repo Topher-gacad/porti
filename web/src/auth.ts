@@ -1,7 +1,7 @@
 import NextAuth from 'next-auth'
 import Credentials from 'next-auth/providers/credentials'
 import { authenticateWithAuthentik } from '@/lib/authentik'
-import { syncUserToLaravel } from '@/lib/api'
+import { syncUserToLaravel, fetchUserProfile } from '@/lib/api'
 import { authenticateLocally } from '@/lib/local-auth'
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
@@ -26,6 +26,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const synced = await syncUserToLaravel(authentikUser)
         if (!synced) return null
 
+        // Fail the login if the profile can't be loaded — otherwise the user gets an
+        // authenticated session with empty roles/permissions that looks like access loss.
+        const profile = await fetchUserProfile(synced.token)
+        if (!profile) return null
+
         return {
           id: authentikUser.uid,
           name: authentikUser.name,
@@ -34,6 +39,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           authentikUid: authentikUser.uid,
           username: authentikUser.username,
           apiToken: synced.token,
+          roles: profile?.roles ?? [],
+          companyId: profile?.company_id ?? null,
+          permissions: profile?.permissions ?? [],
         }
       },
     }),
@@ -53,14 +61,20 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         )
         if (!result) return null
 
+        const profile = await fetchUserProfile(result.token)
+        if (!profile) return null
+
         return {
           id: String(result.user.id),
           name: result.user.name,
           email: result.user.email,
           image: null,
-          authentikUid: result.user.authentik_uid ?? null,
+          authentikUid: result.user.authentik_uid ?? undefined,
           username: result.user.email,
           apiToken: result.token,
+          roles: profile?.roles ?? [],
+          companyId: profile?.company_id ?? null,
+          permissions: profile?.permissions ?? [],
         }
       },
     }),
@@ -86,20 +100,26 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     jwt({ token, user }) {
       if (user) {
         token.authentikUid = user.authentikUid
-        token.username = user.username
-        token.apiToken = user.apiToken
+        token.username     = user.username
+        token.apiToken     = user.apiToken
+        token.roles        = user.roles        ?? []
+        token.companyId    = user.companyId    ?? null
+        token.permissions  = user.permissions  ?? []
       }
       return token
     },
 
     session({ session, token }) {
       if (session.user) {
-        session.user.authentikUid = token.authentikUid
-        session.user.username = token.username
+        session.user.authentikUid = token.authentikUid as string | undefined
+        session.user.username     = token.username     as string | undefined
+        session.user.roles        = (token.roles       as string[])       ?? []
+        session.user.companyId    = (token.companyId   as number | null)  ?? null
+        session.user.permissions  = (token.permissions as string[])       ?? []
       }
       // apiToken is on the session for server-side use (Server Components, Route Handlers).
       // Never read it in Client Components — call a Route Handler instead.
-      session.apiToken = token.apiToken
+      session.apiToken = token.apiToken as string | undefined
       return session
     },
   },

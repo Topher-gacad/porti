@@ -11,35 +11,36 @@ class AdminSeeder extends Seeder
     public function run(): void
     {
         $superAdminRole = Role::firstOrCreate(['name' => 'super-admin', 'guard_name' => 'web']);
-        $developerRole  = Role::firstOrCreate(['name' => 'developer',   'guard_name' => 'web']);
+        $developerRole = Role::firstOrCreate(['name' => 'developer',   'guard_name' => 'web']);
 
         $this->createSuperAdmin($superAdminRole);
 
-        if (!app()->isProduction()) {
+        if (! app()->isProduction()) {
             $this->createDeveloper($developerRole);
         }
     }
 
     private function createSuperAdmin(Role $role): void
     {
-        $email    = env('SUPER_ADMIN_EMAIL');
-        $password = env('SUPER_ADMIN_PASSWORD');
+        $email = config('portal.super_admin.email');
+        $password = config('portal.super_admin.password');
 
-        if (!$email || !$password) {
+        if (! $email || ! $password) {
             $this->command->warn('SUPER_ADMIN_EMAIL or SUPER_ADMIN_PASSWORD not set — skipping superadmin creation.');
+
             return;
         }
 
         $user = User::firstOrCreate(
             ['email' => $email],
             [
-                'name'      => 'Super Admin',
-                'password'  => $password,
+                'name' => 'Super Admin',
+                'password' => $password,
                 'is_active' => true,
             ],
         );
 
-        if (!$user->hasRole('super-admin')) {
+        if (! $user->hasRole('super-admin')) {
             $user->assignRole($role);
         }
 
@@ -48,24 +49,25 @@ class AdminSeeder extends Seeder
 
     private function createDeveloper(Role $role): void
     {
-        $email    = env('DEV_USER_EMAIL');
-        $password = env('DEV_USER_PASSWORD');
+        $email = config('portal.dev_user.email');
+        $password = config('portal.dev_user.password');
 
-        if (!$email || !$password) {
+        if (! $email || ! $password) {
             $this->command->warn('DEV_USER_EMAIL or DEV_USER_PASSWORD not set — skipping developer user creation.');
+
             return;
         }
 
         $user = User::firstOrCreate(
             ['email' => $email],
             [
-                'name'      => 'Developer',
-                'password'  => $password,
+                'name' => 'Developer',
+                'password' => $password,
                 'is_active' => true,
             ],
         );
 
-        if (!$user->hasRole('developer')) {
+        if (! $user->hasRole('developer')) {
             $user->assignRole($role);
         }
 

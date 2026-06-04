@@ -6,16 +6,21 @@ use App\Http\Requests\Branch\StoreBranchRequest;
 use App\Http\Requests\Branch\UpdateBranchRequest;
 use App\Http\Resources\BranchResource;
 use App\Models\Branch;
+use App\Services\TenantAccess;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Symfony\Component\HttpFoundation\Response;
 
 class BranchController extends Controller
 {
+    public function __construct(private readonly TenantAccess $tenant) {}
+
     public function index(): AnonymousResourceCollection
     {
         $this->authorize('viewAny', Branch::class);
 
-        return BranchResource::collection(Branch::paginate(20));
+        $perPage = min((int) request()->integer('per_page', 20), 500);
+
+        return BranchResource::collection(Branch::paginate($perPage));
     }
 
     public function store(StoreBranchRequest $request): BranchResource
@@ -23,6 +28,8 @@ class BranchController extends Controller
         $this->authorize('create', Branch::class);
 
         $data = array_merge(['is_active' => true], $request->validated());
+
+        $this->tenant->assertTenantAssignment(auth()->user(), $data);
 
         return new BranchResource(Branch::create($data));
     }
@@ -38,7 +45,13 @@ class BranchController extends Controller
     {
         $this->authorize('update', $branch);
 
-        $branch->update($request->validated());
+        $data = $request->validated();
+
+        // No-op today (company_id is not an updatable field), but keeps the guard
+        // in place if a tenant FK is ever added to UpdateBranchRequest.
+        $this->tenant->assertTenantAssignment(auth()->user(), $data, $branch);
+
+        $branch->update($data);
 
         return new BranchResource($branch);
     }
