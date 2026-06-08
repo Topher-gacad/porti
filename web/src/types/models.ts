@@ -109,6 +109,77 @@ export type Paginated<T> = {
   }
 }
 
+// ── Form / submission engine (Phase 3 runtime) ──────────────────────────────────
+
+export type FormFieldType =
+  | 'text' | 'textarea' | 'number' | 'integer' | 'date' | 'datetime' | 'boolean'
+  | 'select' | 'multiselect' | 'radio' | 'user' | 'team' | 'file' | 'currency' | 'duration'
+
+export type FormField = {
+  key: string
+  type: FormFieldType
+  label?: string
+  required?: boolean
+  min?: number
+  max?: number
+  options?: string[]
+}
+
+export type FormSummary = {
+  key: string
+  name: string
+  icon: string | null
+  is_global: boolean
+}
+
+export type FormDetail = {
+  key: string
+  name: string
+  icon: string | null
+  version: number
+  workflow_key: string
+  field_schema: FormField[]
+}
+
+export type TransitionOption = { slug: string; name: string }
+
+export type SubmissionEvent = {
+  verb: string
+  properties: Record<string, unknown> | null
+  actor: { id: number; name: string } | null
+  created_at: string | null
+}
+
+export type SubmissionSummary = {
+  id: number
+  number: string
+  form_key: string
+  form_name: string | null
+  state: string | null
+  state_category: string | null
+  requester_id: number
+  created_at: string | null
+}
+
+export type SubmissionDetail = SubmissionSummary & {
+  data: Record<string, unknown>
+  requester: { id: number; name: string } | null
+  assignee: { id: number; name: string } | null
+  pending_approval: { state_slug: string; status: string } | null
+  available_transitions: TransitionOption[]
+  timeline: SubmissionEvent[]
+}
+
+// The submissions list endpoint returns Laravel's un-wrapped paginator (page fields at the
+// top level), unlike the Resource-collection endpoints that nest them under `meta`.
+export type LaravelPage<T> = {
+  data: T[]
+  current_page: number
+  last_page: number
+  per_page: number
+  total: number
+}
+
 export type Single<T> = {
   data: T
 }

@@ -16,7 +16,7 @@ type Tab = { id: string; icon: string; label: string; href?: string; badge?: str
 const TABS: Tab[] = [
   { id: 'dashboard', icon: 'home', label: 'Dashboard', href: '/dashboard' },
   { id: 'services', icon: 'grid', label: 'Services' },
-  { id: 'requests', icon: 'inbox', label: 'Requests', badge: '4' },
+  { id: 'requests', icon: 'inbox', label: 'Requests', href: '/dashboard/requests' },
   { id: 'kb', icon: 'book', label: 'Knowledge Base' },
   { id: 'board', icon: 'message-circle', label: 'Community' },
   { id: 'people', icon: 'users', label: 'People', href: '/dashboard/people' },
