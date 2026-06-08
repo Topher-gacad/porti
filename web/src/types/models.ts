@@ -99,6 +99,17 @@ export type AuditLog = {
   actor: { id: number; name: string; email: string } | null
 }
 
+export type PortalApp = {
+  id: number
+  key: string
+  kind: 'native' | 'external_sso'
+  name: string
+  description: string | null
+  icon: string | null
+  sort_order: number
+  is_global: boolean
+}
+
 export type Paginated<T> = {
   data: T[]
   meta: {

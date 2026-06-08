@@ -1,8 +1,10 @@
 'use client'
 
 import { useMemo, useState } from 'react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import Icon from '@/components/Icon'
+import { usePermissions } from '@/hooks/usePermissions'
 import { useAllUsers } from '@/hooks/useUsers'
 import { useAllDepartments } from '@/hooks/useDepartments'
 import type { User } from '@/types/models'
@@ -107,6 +109,7 @@ function isAdmin(u: User): boolean {
 
 export default function PeopleUsersPage() {
   const router = useRouter()
+  const { hasAnyRole } = usePermissions()
   const { data: users, isLoading } = useAllUsers()
   const { data: departments } = useAllDepartments()
   const [view, setView] = useState<ViewId>('users')
@@ -180,6 +183,11 @@ export default function PeopleUsersPage() {
           <div style={{ fontSize: 13, color: 'var(--ink-500)', marginTop: 3 }}>Manage everyone with access to the IT portal — accounts, roles, and activity.</div>
         </div>
         <div style={{ display: 'flex', gap: 8 }}>
+          {hasAnyRole('super-admin', 'developer') && (
+            <Link href="/dashboard/people/unassigned" style={{ ...ghostBtn, textDecoration: 'none' }}>
+              <Icon name="inbox" size={13} /> Unassigned
+            </Link>
+          )}
           <button type="button" style={ghostBtn}><Icon name="upload" size={13} /> Import CSV</button>
           <button type="button" style={ghostBtn}><Icon name="download" size={13} /> Export</button>
           <button type="button" style={primaryAdmin}><Icon name="user-plus" size={13} /> Invite user</button>
